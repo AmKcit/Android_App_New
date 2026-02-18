@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#ECF0F1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Air Quality Predictor"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:textColor="#2C3E50"/>
+
+    <EditText
+        android:id="@+id/etCityName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter City Name (e.g. London)"
+        android:padding="15dp"
+        android:background="@android:drawable/editbox_background_normal"/>
+
+    <Button
+        android:id="@+id/btnFetchAqi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check Air Quality"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#3498DB"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tvAqiDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data will appear here..."
+            android:textSize="18sp"
+            android:padding="20dp"
+            android:gravity="center"
+            android:textColor="#34495E"/>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

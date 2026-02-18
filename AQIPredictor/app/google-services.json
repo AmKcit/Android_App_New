@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "746583050512",
+    "project_id": "aqi-predictor-5db7e",
+    "storage_bucket": "aqi-predictor-5db7e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:746583050512:android:c3f8127da52338079f7d95",
+        "android_client_info": {
+          "package_name": "com.example.aqipredictor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpK0bgG-vu-GgxPvynsteLTk7pJ41yHzk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

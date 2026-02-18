@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">New App</string>
+    <string name="app_name_plural">New Apps</string>
+    <string-array name="app_name_array">
+        <item>Nepal</item>
+        <item>India</item>
+        <item>Bhutan</item>
+        <item>China</item>
+        <item>America</item>
+    </string-array>
+
+
+</resources>

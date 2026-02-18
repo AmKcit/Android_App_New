@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "81897416410",
+    "project_id": "aqi-app-c1851",
+    "storage_bucket": "aqi-app-c1851.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:81897416410:android:552a86b4fb0057ecab67e3",
+        "android_client_info": {
+          "package_name": "com.example.aqiapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0d_jzO8HidZYnWXQ1j1uRJzHOUFSRCs8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
