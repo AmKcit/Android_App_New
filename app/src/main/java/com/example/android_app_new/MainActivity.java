@@ -8,12 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import retrofit2.*;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
     private Button btnFetchAqi;
     private TextView tvAqiDisplay;
     private DatabaseHelper dbHelper;
+
+    private static final String BASE_URL = "https://api.waqi.info/";
+    private static final String TOKEN = "87c3349785b993ad86d4b01fa941e94ebaf8f224"; // Replace with your token
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,37 +35,52 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
 
         btnFetchAqi.setOnClickListener(v -> {
+
             String city = etCityName.getText().toString().trim();
-            if (!city.isEmpty()) {
-                if (isNetworkAvailable()) {
-                    fetchDataFromApi(city);
-                } else {
-                    fetchDataFromSqlite(city);
-                }
+
+            if (city.isEmpty()) {
+                Toast.makeText(this, "Enter city name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (isNetworkAvailable()) {
+                fetchDataFromApi(city);
+            } else {
+                fetchDataFromSqlite(city);
             }
         });
     }
 
     private void fetchDataFromApi(String city) {
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.waqi.info/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        ApiService apiService = retrofit.create(ApiService.class);
-        // Replace 'demo' with your real API token from aqicn.org
-        String url = "feed/" + city + "/?token=demo";
+        ApiService service = retrofit.create(ApiService.class);
 
-        apiService.getAqiByUrl(url).enqueue(new Callback<AqiResponse>() {
+        service.getCityAqi(city, TOKEN).enqueue(new Callback<AqiResponse>() {
+
             @Override
-            public void onResponse(Call<AqiResponse> call, Response<AqiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && "ok".equals(response.body().status)) {
-                    int aqi = response.body().data.aqi;
-                    String info = "City: " + response.body().data.city.name + "\nAQI: " + aqi;
+            public void onResponse(Call<AqiResponse> call,
+                                   Response<AqiResponse> response) {
+
+                if (response.isSuccessful()
+                        && response.body() != null
+                        && "ok".equals(response.body().getStatus())) {
+
+                    AqiResponse.Data data = response.body().getData();
+
+                    int aqi = data.getAqi();
+                    String cityName = data.getCity() != null ?
+                            data.getCity().getName() : city;
+
+                    String info = "City: " + cityName + "\nAQI: " + aqi;
                     tvAqiDisplay.setText(info);
 
-                    // Save to SQLite for offline use
-                    dbHelper.insertData(response.body().data.city.name, String.valueOf(aqi));
+                    dbHelper.insertData(cityName, String.valueOf(aqi));
+
                 } else {
                     tvAqiDisplay.setText("City not found.");
                 }
@@ -78,14 +94,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchDataFromSqlite(String city) {
+
         Toast.makeText(this, "Offline Mode", Toast.LENGTH_SHORT).show();
+
         Cursor cursor = dbHelper.getAllData();
         StringBuilder data = new StringBuilder("Last Cached Results:\n\n");
         boolean found = false;
 
         while (cursor.moveToNext()) {
+
             if (cursor.getString(1).toLowerCase().contains(city.toLowerCase())) {
-                data.append("City: ").append(cursor.getString(1)).append("\nAQI: ").append(cursor.getString(2)).append("\n\n");
+
+                data.append("City: ")
+                        .append(cursor.getString(1))
+                        .append("\nAQI: ")
+                        .append(cursor.getString(2))
+                        .append("\n\n");
+
                 found = true;
             }
         }
@@ -95,10 +120,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             tvAqiDisplay.setText("No offline data for this city.");
         }
+
+        cursor.close();
     }
 
     private boolean isNetworkAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }

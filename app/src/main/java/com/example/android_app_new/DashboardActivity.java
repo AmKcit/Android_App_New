@@ -2,37 +2,70 @@ package com.example.android_app_new;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import retrofit2.*;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private TextView tvAqiValue, tvPrediction, tvAqiStatus;
-    // IMPORTANT: Put your actual token here from waqi.info email
-    private final String API_TOKEN = "YOUR_ACTUAL_TOKEN_HERE";
-    private int lastStoredAqi = 100;
+    private TextView tvAqiValue, tvStatus, tvPrediction, tvPollutants;
+    private Spinner citySpinner;
+
+    private final String API_TOKEN = "87c3349785b993ad86d4b01fa941e94ebaf8f224";
+
+    private int lastAqi = -1;
+
+    String[] cities = {
+            "kathmandu",
+            "pokhara",
+            "lalitpur",
+            "biratnagar",
+            "bharatpur"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // This line ensures you see the NEW screen design
         setContentView(R.layout.activity_dashboard);
 
         tvAqiValue = findViewById(R.id.tvAqiValue);
+        tvStatus = findViewById(R.id.tvAqiStatus);
         tvPrediction = findViewById(R.id.tvPrediction);
-        tvAqiStatus = findViewById(R.id.tvAqiStatus);
+        tvPollutants = findViewById(R.id.tvPollutants);
+        citySpinner = findViewById(R.id.citySpinner);
 
-        fetchRealTimeAqi();
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        cities);
+
+        citySpinner.setAdapter(adapter);
+
+        citySpinner.setOnItemSelectedListener(
+                new android.widget.AdapterView.OnItemSelectedListener() {
+
+                    @Override
+                    public void onItemSelected(android.widget.AdapterView<?> parent,
+                                               android.view.View view,
+                                               int position,
+                                               long id) {
+
+                        fetchAqi(cities[position]);
+                    }
+
+                    @Override
+                    public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+                });
     }
 
-    private void fetchRealTimeAqi() {
+    private void fetchAqi(String city) {
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.waqi.info/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -40,46 +73,83 @@ public class DashboardActivity extends AppCompatActivity {
 
         ApiService service = retrofit.create(ApiService.class);
 
-        service.getLocalAqi(API_TOKEN).enqueue(new Callback<AqiResponse>() {
+        service.getCityAqi(city, API_TOKEN).enqueue(new Callback<AqiResponse>() {
+
             @Override
-            public void onResponse(Call<AqiResponse> call, Response<AqiResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    int currentAqi = response.body().getData().getAqi();
-                    updateUI(currentAqi);
+            public void onResponse(Call<AqiResponse> call,
+                                   Response<AqiResponse> response) {
+
+                if (response.isSuccessful()
+                        && response.body() != null
+                        && "ok".equals(response.body().getStatus())
+                        && response.body().getData() != null) {
+
+                    updateUI(response.body().getData());
+
+                } else {
+                    Toast.makeText(DashboardActivity.this,
+                            "Failed to fetch data",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<AqiResponse> call, Throwable t) {
-                Toast.makeText(DashboardActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                tvAqiValue.setText("Error: " + t.getMessage());
+                t.printStackTrace();
             }
         });
     }
 
-    private void updateUI(int currentAqi) {
-        tvAqiValue.setText(String.valueOf(currentAqi));
+    private void updateUI(AqiResponse.Data data) {
+
+        int currentAqi = data.getAqi();
+        tvAqiValue.setText("AQI: " + currentAqi);
 
         if (currentAqi <= 50) {
-            tvAqiStatus.setText("EXCELLENT");
-            tvAqiStatus.setTextColor(Color.GREEN);
+            tvStatus.setText("GOOD");
+            tvStatus.setTextColor(Color.GREEN);
         } else if (currentAqi <= 100) {
-            tvAqiStatus.setText("MODERATE");
-            tvAqiStatus.setTextColor(Color.parseColor("#FFD700")); // Solid Yellow/Gold
+            tvStatus.setText("MODERATE");
+            tvStatus.setTextColor(Color.YELLOW);
         } else {
-            tvAqiStatus.setText("POOR");
-            tvAqiStatus.setTextColor(Color.RED);
+            tvStatus.setText("POOR");
+            tvStatus.setTextColor(Color.RED);
         }
 
-        showPrediction(currentAqi, lastStoredAqi);
+        AqiResponse.Iaqi p = data.getIaqi();
+
+        if (p != null) {
+
+            String pollutants =
+                    "PM2.5: " + (p.getPm25() != null ? p.getPm25().getV() : "N/A") +
+                            "\nPM10: " + (p.getPm10() != null ? p.getPm10().getV() : "N/A") +
+                            "\nNO2: " + (p.getNo2() != null ? p.getNo2().getV() : "N/A");
+
+            tvPollutants.setText(pollutants);
+        }
+
+        predictHourly(currentAqi);
+        lastAqi = currentAqi;
     }
 
-    private void showPrediction(int current, int previous) {
-        if (current < previous) {
-            tvPrediction.setText("Trend: Improving! Air is getting cleaner.");
-        } else if (current > previous) {
-            tvPrediction.setText("Trend: Worsening. Expect higher pollution levels.");
-        } else {
-            tvPrediction.setText("Trend: Stable conditions expected.");
+    private void predictHourly(int current) {
+
+        if (lastAqi == -1) {
+            tvPrediction.setText("Prediction: Gathering data...");
+            return;
         }
+
+        int predicted;
+
+        if (current > lastAqi) {
+            predicted = current + 5;
+        } else if (current < lastAqi) {
+            predicted = current - 5;
+        } else {
+            predicted = current;
+        }
+
+        tvPrediction.setText("Next Hour Predicted AQI: " + predicted);
     }
 }
