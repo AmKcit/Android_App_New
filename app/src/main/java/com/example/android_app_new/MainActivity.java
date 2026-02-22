@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvAqiDisplay;
     private DatabaseHelper dbHelper;
 
-    private static final String BASE_URL = "https://api.waqi.info/";
-    private static final String TOKEN = "87c3349785b993ad86d4b01fa941e94ebaf8f224"; // Replace with your token
+    // ✅ OpenAQ Base URL
+    private static final String BASE_URL = "https://api.openaq.org/v2/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,26 +60,47 @@ public class MainActivity extends AppCompatActivity {
 
         ApiService service = retrofit.create(ApiService.class);
 
-        service.getCityAqi(city, TOKEN).enqueue(new Callback<AqiResponse>() {
+        // ✅ OpenAQ Call
+        service.getLatestData(city, 1).enqueue(new Callback<OpenAqResponse>() {
 
             @Override
-            public void onResponse(Call<AqiResponse> call,
-                                   Response<AqiResponse> response) {
+            public void onResponse(Call<OpenAqResponse> call,
+                                   Response<OpenAqResponse> response) {
 
                 if (response.isSuccessful()
                         && response.body() != null
-                        && "ok".equals(response.body().getStatus())) {
+                        && response.body().getResults() != null
+                        && !response.body().getResults().isEmpty()) {
 
-                    AqiResponse.Data data = response.body().getData();
+                    OpenAqResponse.Result result =
+                            response.body().getResults().get(0);
 
-                    int aqi = data.getAqi();
-                    String cityName = data.getCity() != null ?
-                            data.getCity().getName() : city;
+                    String cityName = result.getCity();
 
-                    String info = "City: " + cityName + "\nAQI: " + aqi;
-                    tvAqiDisplay.setText(info);
+                    double pm25Value = -1;
 
-                    dbHelper.insertData(cityName, String.valueOf(aqi));
+                    for (OpenAqResponse.Measurement m :
+                            result.getMeasurements()) {
+
+                        if (m.getParameter().equalsIgnoreCase("pm25")) {
+                            pm25Value = m.getValue();
+                            break;
+                        }
+                    }
+
+                    if (pm25Value != -1) {
+
+                        String info = "City: " + cityName +
+                                "\nPM2.5: " + pm25Value + " µg/m³";
+
+                        tvAqiDisplay.setText(info);
+
+                        dbHelper.insertData(cityName,
+                                String.valueOf(pm25Value));
+
+                    } else {
+                        tvAqiDisplay.setText("PM2.5 data not available.");
+                    }
 
                 } else {
                     tvAqiDisplay.setText("City not found.");
@@ -87,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<AqiResponse> call, Throwable t) {
+            public void onFailure(Call<OpenAqResponse> call, Throwable t) {
                 tvAqiDisplay.setText("Error: " + t.getMessage());
             }
         });
@@ -107,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
                 data.append("City: ")
                         .append(cursor.getString(1))
-                        .append("\nAQI: ")
+                        .append("\nPM2.5: ")
                         .append(cursor.getString(2))
                         .append("\n\n");
 
