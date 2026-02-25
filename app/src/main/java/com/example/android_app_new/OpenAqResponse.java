@@ -11,7 +11,6 @@ public class OpenAqResponse {
     }
 
     public static class Result {
-
         private String city;
         private List<Measurement> measurements;
 
@@ -25,10 +24,8 @@ public class OpenAqResponse {
     }
 
     public static class Measurement {
-
         private String parameter;
         private double value;
-        private String unit;
 
         public String getParameter() {
             return parameter;
@@ -36,10 +33,6 @@ public class OpenAqResponse {
 
         public double getValue() {
             return value;
-        }
-
-        public String getUnit() {
-            return unit;
         }
     }
 }

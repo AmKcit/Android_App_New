@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         ApiService service = retrofit.create(ApiService.class);
 
         // ✅ OpenAQ Call
-        service.getLatestData(city, 1).enqueue(new Callback<OpenAqResponse>() {
+        service.getLatestData("233a86d215c6b718a406a6e49b807c366bbf794da811a13e909c8802fa1ece99", "US", city, 1).enqueue(new Callback<OpenAqResponse>() {
 
             @Override
             public void onResponse(Call<OpenAqResponse> call,

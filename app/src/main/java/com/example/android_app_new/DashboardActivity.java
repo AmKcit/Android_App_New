@@ -1,5 +1,6 @@
 package com.example.android_app_new;
 
+import android.util.Log;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -14,7 +15,6 @@ import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.components.XAxis;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.*;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -27,13 +27,14 @@ public class DashboardActivity extends AppCompatActivity {
 
     private ApiService service;
 
+    // 🔥 CHANGE THESE CITIES TO TEST FOREIGN FIRST
     String[] cities = {
-            "Kathmandu",
-            "Pokhara",
-            "Lalitpur",
-            "Biratnagar",
-            "Bharatpur"
+            "Los Angeles",
+            "Delhi",
+            "London"
     };
+
+    private static final String API_KEY = "YOUR_API_KEY";  // PUT YOUR KEY HERE
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +47,9 @@ public class DashboardActivity extends AppCompatActivity {
         tvPrediction = findViewById(R.id.tvPrediction);
         lineChart = findViewById(R.id.lineChart);
 
-        // Initialize Retrofit ONCE
+        // ✅ Updated to v3
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.openaq.org/v2/")
+                .baseUrl("https://api.openaq.org/v3/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -69,7 +70,15 @@ public class DashboardActivity extends AppCompatActivity {
                                                android.view.View view,
                                                int position,
                                                long id) {
-                        fetchAqi(cities[position]);
+
+                        String selectedCity = cities[position];
+
+                        // 🔥 Change country based on city
+                        String countryCode = "US";
+                        if (selectedCity.equals("Delhi")) countryCode = "IN";
+                        if (selectedCity.equals("London")) countryCode = "GB";
+
+                        fetchAqi(countryCode, selectedCity);
                     }
 
                     @Override
@@ -77,29 +86,51 @@ public class DashboardActivity extends AppCompatActivity {
                 });
     }
 
-    private void fetchAqi(String selectedCity) {
+    private void fetchAqi(String country, String city) {
 
-        service.getLatestData("NP", 100).enqueue(new Callback<OpenAqResponse>() {
+        service.getLatestData("YOUR_API_KEY", country, city, 5)
+                .enqueue(new Callback<OpenAqResponse>() {
 
-            @Override
-            public void onResponse(Call<OpenAqResponse> call,
-                                   Response<OpenAqResponse> response) {
+                    @Override
+                    public void onResponse(Call<OpenAqResponse> call,
+                                           Response<OpenAqResponse> response) {
 
-                if (response.isSuccessful()
-                        && response.body() != null
-                        && response.body().getResults() != null
-                        && !response.body().getResults().isEmpty()) {
+                        Log.d("API_DEBUG", "Response Code: " + response.code());
 
-                    double pm25 = -1;
+                        if (!response.isSuccessful()) {
+                            showError("HTTP Error: " + response.code());
+                            return;
+                        }
 
-                    for (OpenAqResponse.Result result :
-                            response.body().getResults()) {
+                        if (response.body() == null) {
+                            showError("Response body is NULL");
+                            return;
+                        }
 
-                        if (result.getCity() != null &&
-                                result.getCity().equalsIgnoreCase(selectedCity)) {
+                        if (response.body().getResults() == null) {
+                            showError("Results is NULL");
+                            return;
+                        }
+
+                        if (response.body().getResults().isEmpty()) {
+                            showError("Results list is EMPTY");
+                            return;
+                        }
+
+                        double pm25 = -1;
+
+                        for (OpenAqResponse.Result result :
+                                response.body().getResults()) {
+
+                            if (result.getMeasurements() == null) {
+                                Log.d("API_DEBUG", "Measurements NULL");
+                                continue;
+                            }
 
                             for (OpenAqResponse.Measurement m :
                                     result.getMeasurements()) {
+
+                                Log.d("API_DEBUG", "Parameter: " + m.getParameter());
 
                                 if ("pm25".equalsIgnoreCase(m.getParameter())) {
                                     pm25 = m.getValue();
@@ -107,25 +138,21 @@ public class DashboardActivity extends AppCompatActivity {
                                 }
                             }
                         }
+
+                        if (pm25 != -1) {
+                            updateUI(pm25);
+                            updateChart(pm25);
+                        } else {
+                            showError("PM2.5 not found in response");
+                        }
                     }
 
-                    if (pm25 != -1) {
-                        updateUI(pm25);
-                        updateChart(pm25);
-                    } else {
-                        showError("PM2.5 data not available for this city");
+                    @Override
+                    public void onFailure(Call<OpenAqResponse> call, Throwable t) {
+                        Log.d("API_DEBUG", "Failure: " + t.getMessage());
+                        showError("Network Error: " + t.getMessage());
                     }
-
-                } else {
-                    showError("No data available");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<OpenAqResponse> call, Throwable t) {
-                showError("Network Error");
-            }
-        });
+                });
     }
 
     private void updateUI(double pm25) {
