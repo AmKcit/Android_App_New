@@ -34,7 +34,7 @@ public class DashboardActivity extends AppCompatActivity {
             "London"
     };
 
-    private static final String API_KEY = "YOUR_API_KEY";  // PUT YOUR KEY HERE
+    private static final String API_KEY = "1ad212da8aa519bd52ab75d0daa97e5b070181b57820151d7d9caf881029f0e5";  // PUT YOUR KEY HERE
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void fetchAqi(String country, String city) {
 
-        service.getLatestData("YOUR_API_KEY", country, city, 5)
+        service.getLatestData("1ad212da8aa519bd52ab75d0daa97e5b070181b57820151d7d9caf881029f0e5", country, city, 5)
                 .enqueue(new Callback<OpenAqResponse>() {
 
                     @Override
