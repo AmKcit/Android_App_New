@@ -28,6 +28,9 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".AdminMainActivity" />
+        <activity android:name=".AdminSettingsActivity" />
+        <activity android:name=".AdminAnalyticsActivity" />
+        <activity android:name=".EditUserActivity" />
         <activity android:name=".DashboardActivity" />
 
     </application>

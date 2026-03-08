@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        tvGoToSignup = findViewById(R.id.tvGoToSignup);
+        tvGoToSignup = findViewById(R.id.tvSignup);
 
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();

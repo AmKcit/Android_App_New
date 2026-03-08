@@ -1,40 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp"
-    android:background="#F4F7F6">
+    android:background="#F8F9FA">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Admin Dashboard"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#2C3E50"
-        android:layout_marginBottom="10dp"/>
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@drawable/gradient_header">
 
-    <TextView
-        android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Dashboard"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manage users and system settings"
+            android:textSize="14sp"
+            android:textColor="#E0E0E0"
+            android:layout_marginBottom="10dp"/>
+    </LinearLayout>
+
+    <!-- Statistics Cards -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Registered Users List:"
-        android:textSize="16sp"
-        android:layout_marginBottom="20dp"/>
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:gravity="center">
 
-    <ListView
-        android:id="@+id/lvUsers"
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="7dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvTotalUsers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Users"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="7dp"
+            android:layout_marginEnd="7dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvActiveUsers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#388E3C"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active Users"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="7dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvAdminCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#D32F2F"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admins"
+                    android:textSize="12sp"
+                    android:textColor="#757575"
+                    android:layout_marginTop="5dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <!-- Users List Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Registered Users"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2C3E50"/>
+
+        <Button
+            android:id="@+id/btnRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Refresh"
+            android:textSize="12sp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:backgroundTint="#1976D2"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+    </LinearLayout>
+
+    <!-- Users RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvUsers"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="#D5DBDB"
-        android:dividerHeight="1dp"/>
+        android:padding="10dp"/>
 
-    <Button
-        android:id="@+id/btnLogoutAdmin"
+    <!-- Bottom Action Buttons -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        android:backgroundTint="#E74C3C"
-        android:layout_marginTop="10dp"/>
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btnAnalytics"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Analytics"
+            android:textSize="13sp"
+            android:layout_marginEnd="5dp"
+            android:backgroundTint="#673AB7"
+            android:textColor="#FFFFFF"/>
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Settings"
+            android:textSize="13sp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:backgroundTint="#FF9800"
+            android:textColor="#FFFFFF"/>
+
+        <Button
+            android:id="@+id/btnLogoutAdmin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Logout"
+            android:textSize="13sp"
+            android:layout_marginStart="5dp"
+            android:backgroundTint="#E74C3C"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
 </LinearLayout>

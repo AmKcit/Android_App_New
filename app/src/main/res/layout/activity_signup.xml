@@ -1,60 +1,292 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="30dp"
-    android:gravity="center"
-    android:background="#F9F9F9">
+    android:background="@android:color/white"
+    android:scrollbars="none">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Account"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="#27AE60"
-        android:layout_marginBottom="40dp"/>
-
-    <EditText
-        android:id="@+id/etEmail"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:hint="Email Address"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="15dp"/>
-
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:hint="Create Password"
-        android:inputType="textPassword"
-        android:layout_marginBottom="15dp"/>
-
-    <CheckBox
-        android:id="@+id/cbIsAdmin"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register as Administrator"
-        android:layout_gravity="left"
-        android:layout_marginBottom="20dp"/>
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center">
 
-    <Button
-        android:id="@+id/btnSignup"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:text="REGISTER NOW"
-        android:backgroundTint="#27AE60"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"/>
+        <!-- Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="32dp">
 
-    <TextView
-        android:id="@+id/tvGoToLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Already have an account? Login"
-        android:layout_marginTop="20dp"
-        android:textColor="#27AE60"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌍"
+                android:textSize="64sp"
+                android:layout_marginBottom="16dp"/>
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Account"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="#1B5E20"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Join our community and monitor air quality"
+                android:textSize="14sp"
+                android:textColor="#757575"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <!-- Email Input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Email Address"
+            app:boxBackgroundColor="#F5F5F5"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeColor="#27AE60"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="#27AE60"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textEmailAddress"
+                android:textColor="#212121"
+                android:textSize="16sp"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Password Input with Toggle -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Create Password"
+            app:boxBackgroundColor="#F5F5F5"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeColor="#27AE60"
+            app:boxStrokeWidthFocused="2dp"
+            app:endIconMode="password_toggle"
+            app:endIconTint="#27AE60"
+            app:hintTextColor="#27AE60"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textPassword"
+                android:textColor="#212121"
+                android:textSize="16sp"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Confirm Password Input with Toggle -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/confirmPasswordInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Confirm Password"
+            app:boxBackgroundColor="#F5F5F5"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxStrokeColor="#27AE60"
+            app:boxStrokeWidthFocused="2dp"
+            app:endIconMode="password_toggle"
+            app:endIconTint="#27AE60"
+            app:hintTextColor="#27AE60"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:inputType="textPassword"
+                android:textColor="#212121"
+                android:textSize="16sp"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Password Strength Indicator -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <View
+                    android:id="@+id/strengthBar1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#E0E0E0"
+                    android:layout_marginEnd="4dp"/>
+
+                <View
+                    android:id="@+id/strengthBar2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#E0E0E0"
+                    android:layout_marginEnd="4dp"/>
+
+                <View
+                    android:id="@+id/strengthBar3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:background="#E0E0E0"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPasswordStrength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password strength: Weak"
+                android:textSize="12sp"
+                android:textColor="#F57C00"/>
+
+        </LinearLayout>
+
+        <!-- Password Match Indicator -->
+        <LinearLayout
+            android:id="@+id/passwordMatchContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivPasswordMatch"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:src="@android:drawable/ic_menu_view"
+                app:tint="#F44336"/>
+
+            <TextView
+                android:id="@+id/tvPasswordMatch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Passwords do not match"
+                android:textSize="12sp"
+                android:textColor="#F44336"/>
+
+        </LinearLayout>
+
+        <!-- Admin Checkbox with Modern Style -->
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbIsAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Register as Administrator"
+            android:textSize="16sp"
+            android:textColor="#212121"
+            android:layout_marginBottom="24dp"
+            app:buttonTint="#27AE60"/>
+
+        <!-- Signup Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignup"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="REGISTER NOW"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#27AE60"
+            style="@style/Widget.MaterialComponents.Button"/>
+
+        <!-- Divider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="#E0E0E0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OR"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:layout_marginHorizontal="16dp"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"
+                android:background="#E0E0E0"/>
+
+        </LinearLayout>
+
+        <!-- Login Link -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Already have an account? "
+                android:textColor="#757575"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/tvGoToLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="#27AE60"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+        </LinearLayout></LinearLayout>
+</ScrollView>
