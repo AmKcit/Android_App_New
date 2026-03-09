@@ -4,12 +4,16 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import retrofit2.*;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -21,8 +25,11 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvAqiDisplay;
     private DatabaseHelper dbHelper;
 
-    // ✅ OpenAQ Base URL
-    private static final String BASE_URL = "https://api.openaq.org/v2/";
+    // ✅ WAQI Base URL
+    private static final String BASE_URL = "https://api.waqi.info/";
+
+    // ✅ WAQI API TOKEN
+    private static final String API_TOKEN = "87c3349785b993ad86d4b01fa941e94ebaf8f224";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         etCityName = findViewById(R.id.etCityName);
         btnFetchAqi = findViewById(R.id.btnFetchAqi);
         tvAqiDisplay = findViewById(R.id.tvAqiDisplay);
+
         dbHelper = new DatabaseHelper(this);
 
         btnFetchAqi.setOnClickListener(v -> {
@@ -39,77 +47,85 @@ public class MainActivity extends AppCompatActivity {
             String city = etCityName.getText().toString().trim();
 
             if (city.isEmpty()) {
-                Toast.makeText(this, "Enter city name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Enter city name (e.g., London, Delhi, Mumbai)", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            // Convert city name to lowercase for API
+            String cityForApi = city.toLowerCase().replaceAll("\\s+", "");
+
             if (isNetworkAvailable()) {
-                fetchDataFromApi(city);
+                tvAqiDisplay.setText("Fetching data...");
+                fetchDataFromApi(cityForApi);
             } else {
                 fetchDataFromSqlite(city);
             }
+
         });
     }
 
     private void fetchDataFromApi(String city) {
 
+        Gson gson = new GsonBuilder().setLenient().create();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         ApiService service = retrofit.create(ApiService.class);
 
-        // ✅ OpenAQ Call
-        service.getLatestData("1ad212da8aa519bd52ab75d0daa97e5b070181b57820151d7d9caf881029f0e5", "US", city, 1).enqueue(new Callback<OpenAqResponse>() {
+        service.getCityData(city, API_TOKEN).enqueue(new Callback<WaqiResponse>() {
 
             @Override
-            public void onResponse(Call<OpenAqResponse> call,
-                                   Response<OpenAqResponse> response) {
+            public void onResponse(Call<WaqiResponse> call,
+                                   Response<WaqiResponse> response) {
 
-                if (response.isSuccessful()
-                        && response.body() != null
-                        && response.body().getResults() != null
-                        && !response.body().getResults().isEmpty()) {
+                Log.d("MainActivity", "Response Code: " + response.code());
 
-                    OpenAqResponse.Result result =
-                            response.body().getResults().get(0);
+                if (response.isSuccessful() && response.body() != null) {
 
-                    String cityName = result.getCity();
+                    WaqiResponse.Data data = response.body().getData();
 
-                    double pm25Value = -1;
+                    if (data != null) {
 
-                    for (OpenAqResponse.Measurement m :
-                            result.getMeasurements()) {
-
-                        if (m.getParameter().equalsIgnoreCase("pm25")) {
-                            pm25Value = m.getValue();
-                            break;
-                        }
-                    }
-
-                    if (pm25Value != -1) {
+                        int aqi = data.getAqi();
+                        String cityName = data.getCity();
 
                         String info = "City: " + cityName +
-                                "\nPM2.5: " + pm25Value + " µg/m³";
+                                "\nAQI: " + aqi +
+                                "\nPM2.5: " + String.format("%.2f", data.getPm25()) +
+                                "\nPM10: " + String.format("%.2f", data.getPm10());
 
                         tvAqiDisplay.setText(info);
 
                         dbHelper.insertData(cityName,
-                                String.valueOf(pm25Value));
+                                String.valueOf(aqi));
 
                     } else {
-                        tvAqiDisplay.setText("PM2.5 data not available.");
+                        tvAqiDisplay.setText("City not found.");
                     }
 
                 } else {
-                    tvAqiDisplay.setText("City not found.");
+                    String errorMsg = "API Error: " + response.code();
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMsg += "\n" + response.errorBody().string();
+                        } catch (Exception e) {
+                            Log.e("MainActivity", "Error reading error body", e);
+                        }
+                    }
+                    tvAqiDisplay.setText(errorMsg);
+                    Log.e("MainActivity", "API Error: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<OpenAqResponse> call, Throwable t) {
-                tvAqiDisplay.setText("Error: " + t.getMessage());
+            public void onFailure(Call<WaqiResponse> call, Throwable t) {
+                Log.e("MainActivity", "Network Error: " + t.getMessage(), t);
+                tvAqiDisplay.setText("Network Error: " + t.getMessage() +
+                    "\n\nMake sure you have internet connection and the API token is valid.");
+                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -119,7 +135,9 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Offline Mode", Toast.LENGTH_SHORT).show();
 
         Cursor cursor = dbHelper.getAllData();
+
         StringBuilder data = new StringBuilder("Last Cached Results:\n\n");
+
         boolean found = false;
 
         while (cursor.moveToNext()) {
@@ -128,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
                 data.append("City: ")
                         .append(cursor.getString(1))
-                        .append("\nPM2.5: ")
+                        .append("\nAQI: ")
                         .append(cursor.getString(2))
                         .append("\n\n");
 
@@ -146,10 +164,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isNetworkAvailable() {
+
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
         return activeNetwork != null && activeNetwork.isConnected();
     }
 }

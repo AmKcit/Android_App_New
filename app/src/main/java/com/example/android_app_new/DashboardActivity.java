@@ -1,18 +1,23 @@
 package com.example.android_app_new;
 
-import android.util.Log;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.components.XAxis;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -24,37 +29,63 @@ public class DashboardActivity extends AppCompatActivity {
     private Spinner citySpinner;
     private TextView tvAqiValue, tvStatus, tvPrediction;
     private LineChart lineChart;
+    private ImageButton btnThemeToggle, btnLogout;
+    private LinearLayout mainLayout;
 
     private ApiService service;
 
-    // 🔥 CHANGE THESE CITIES TO TEST FOREIGN FIRST
+    private SharedPreferences sharedPreferences;
+    private boolean isDarkMode = true;
+
+    // Cities supported by WAQI
     String[] cities = {
-            "Los Angeles",
-            "Delhi",
-            "London"
+            "lahore",
+            "delhi",
+            "mumbai",
+            "bangkok",
+            "jakarta",
+            "shanghai",
+            "beijing",
+            "seoul",
+            "tokyo",
+            "london"
     };
 
-    private static final String API_KEY = "1ad212da8aa519bd52ab75d0daa97e5b070181b57820151d7d9caf881029f0e5";  // PUT YOUR KEY HERE
+    private static final String API_KEY = "87c3349785b993ad86d4b01fa941e94ebaf8f224";
+    private static final String BASE_URL = "https://api.waqi.info/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE);
+        isDarkMode = sharedPreferences.getBoolean("isDarkMode", true);
+
         setContentView(R.layout.activity_dashboard);
 
+        mainLayout = findViewById(R.id.mainLayout);
         citySpinner = findViewById(R.id.citySpinner);
         tvAqiValue = findViewById(R.id.tvAqiValue);
         tvStatus = findViewById(R.id.tvAqiStatus);
         tvPrediction = findViewById(R.id.tvPrediction);
         lineChart = findViewById(R.id.lineChart);
+        btnThemeToggle = findViewById(R.id.btnThemeToggle);
+        btnLogout = findViewById(R.id.btnLogout);
 
-        // ✅ Updated to v3
+        applyTheme();
+
+        btnThemeToggle.setOnClickListener(v -> toggleTheme());
+        btnLogout.setOnClickListener(v -> logout());
+
+        // Retrofit
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.openaq.org/v3/")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         service = retrofit.create(ApiService.class);
 
+        // Spinner setup
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(this,
                         android.R.layout.simple_spinner_dropdown_item,
@@ -71,14 +102,8 @@ public class DashboardActivity extends AppCompatActivity {
                                                int position,
                                                long id) {
 
-                        String selectedCity = cities[position];
-
-                        // 🔥 Change country based on city
-                        String countryCode = "US";
-                        if (selectedCity.equals("Delhi")) countryCode = "IN";
-                        if (selectedCity.equals("London")) countryCode = "GB";
-
-                        fetchAqi(countryCode, selectedCity);
+                        String city = cities[position];
+                        fetchAqi(city);
                     }
 
                     @Override
@@ -86,124 +111,158 @@ public class DashboardActivity extends AppCompatActivity {
                 });
     }
 
-    private void fetchAqi(String country, String city) {
+    private void fetchAqi(String city) {
 
-        service.getLatestData("1ad212da8aa519bd52ab75d0daa97e5b070181b57820151d7d9caf881029f0e5", country, city, 5)
-                .enqueue(new Callback<OpenAqResponse>() {
+        service.getCityData(city, API_KEY)
+                .enqueue(new Callback<WaqiResponse>() {
 
                     @Override
-                    public void onResponse(Call<OpenAqResponse> call,
-                                           Response<OpenAqResponse> response) {
+                    public void onResponse(Call<WaqiResponse> call,
+                                           Response<WaqiResponse> response) {
 
-                        Log.d("API_DEBUG", "Response Code: " + response.code());
+                        Log.d("DashboardActivity", "Response Code: " + response.code());
+                        Log.d("DashboardActivity", "Response Body: " + (response.body() != null ? response.body().getStatus() : "null"));
 
-                        if (!response.isSuccessful()) {
-                            showError("HTTP Error: " + response.code());
+                        if (!response.isSuccessful() || response.body() == null) {
+                            showError("API Error: " + response.code());
                             return;
                         }
 
-                        if (response.body() == null) {
-                            showError("Response body is NULL");
+                        WaqiResponse.Data data = response.body().getData();
+
+                        if (data == null) {
+                            showError("City not found");
                             return;
                         }
 
-                        if (response.body().getResults() == null) {
-                            showError("Results is NULL");
-                            return;
-                        }
+                        int aqi = data.getAqi();
 
-                        if (response.body().getResults().isEmpty()) {
-                            showError("Results list is EMPTY");
-                            return;
-                        }
+                        updateUI(
+                                aqi,
+                                data.getPm25(),
+                                data.getPm10(),
+                                data.getNo2(),
+                                data.getO3()
+                        );
 
-                        double pm25 = -1;
-
-                        for (OpenAqResponse.Result result :
-                                response.body().getResults()) {
-
-                            if (result.getMeasurements() == null) {
-                                Log.d("API_DEBUG", "Measurements NULL");
-                                continue;
-                            }
-
-                            for (OpenAqResponse.Measurement m :
-                                    result.getMeasurements()) {
-
-                                Log.d("API_DEBUG", "Parameter: " + m.getParameter());
-
-                                if ("pm25".equalsIgnoreCase(m.getParameter())) {
-                                    pm25 = m.getValue();
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (pm25 != -1) {
-                            updateUI(pm25);
-                            updateChart(pm25);
-                        } else {
-                            showError("PM2.5 not found in response");
-                        }
+                        updateChart(aqi);
                     }
 
                     @Override
-                    public void onFailure(Call<OpenAqResponse> call, Throwable t) {
-                        Log.d("API_DEBUG", "Failure: " + t.getMessage());
+                    public void onFailure(Call<WaqiResponse> call, Throwable t) {
+                        Log.e("DashboardActivity", "Network Error: " + t.getMessage(), t);
                         showError("Network Error: " + t.getMessage());
                     }
                 });
     }
 
-    private void updateUI(double pm25) {
+    private void updateUI(double aqi, double pm25, double pm10, double no2, double o3) {
 
-        tvAqiValue.setText(String.format("%.2f µg/m³", pm25));
+        tvAqiValue.setText(String.valueOf((int) aqi));
 
-        if (pm25 <= 12) {
+        if (aqi <= 50) {
             tvStatus.setText("Good");
-            tvStatus.setTextColor(Color.parseColor("#2E7D32"));
-        } else if (pm25 <= 35.4) {
+            tvStatus.setTextColor(Color.GREEN);
+        }
+        else if (aqi <= 100) {
             tvStatus.setText("Moderate");
-            tvStatus.setTextColor(Color.parseColor("#F9A825"));
-        } else if (pm25 <= 55.4) {
-            tvStatus.setText("Unhealthy for Sensitive");
-            tvStatus.setTextColor(Color.parseColor("#EF6C00"));
-        } else {
+            tvStatus.setTextColor(Color.YELLOW);
+        }
+        else if (aqi <= 150) {
+            tvStatus.setText("Unhealthy (Sensitive)");
+            tvStatus.setTextColor(Color.parseColor("#FF9800"));
+        }
+        else if (aqi <= 200) {
             tvStatus.setText("Unhealthy");
-            tvStatus.setTextColor(Color.parseColor("#C62828"));
+            tvStatus.setTextColor(Color.RED);
+        }
+        else {
+            tvStatus.setText("Very Unhealthy");
+            tvStatus.setTextColor(Color.parseColor("#8B0000"));
         }
 
-        tvPrediction.setText("Next Hour Prediction: Stable Trend");
+        TextView tvPM25 = findViewById(R.id.tvPM25);
+        TextView tvPM10 = findViewById(R.id.tvPM10);
+        TextView tvNO2 = findViewById(R.id.tvNO2);
+        TextView tvO3 = findViewById(R.id.tvO3);
+
+        if (tvPM25 != null) tvPM25.setText(String.valueOf(pm25));
+        if (tvPM10 != null) tvPM10.setText(String.valueOf(pm10));
+        if (tvNO2 != null) tvNO2.setText(String.valueOf(no2));
+        if (tvO3 != null) tvO3.setText(String.valueOf(o3));
+
+        tvPrediction.setText("Next Hour Prediction: Stable");
     }
 
-    private void updateChart(double value) {
+    private void updateChart(double aqi) {
 
         ArrayList<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(1f, (float)(value - 5)));
-        entries.add(new Entry(2f, (float)(value - 2)));
-        entries.add(new Entry(3f, (float)value));
-        entries.add(new Entry(4f, (float)(value + 3)));
 
-        LineDataSet dataSet = new LineDataSet(entries, "PM2.5 Trend");
-        dataSet.setColor(Color.BLUE);
-        dataSet.setCircleColor(Color.BLUE);
+        entries.add(new Entry(1, (float)(aqi - 10)));
+        entries.add(new Entry(2, (float)(aqi - 5)));
+        entries.add(new Entry(3, (float)aqi));
+        entries.add(new Entry(4, (float)(aqi + 8)));
+        entries.add(new Entry(5, (float)(aqi + 4)));
+
+        LineDataSet dataSet = new LineDataSet(entries, "AQI Trend");
+
+        dataSet.setColor(Color.CYAN);
+        dataSet.setCircleColor(Color.CYAN);
         dataSet.setLineWidth(3f);
-        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setCircleRadius(4f);
 
         LineData lineData = new LineData(dataSet);
-        lineChart.setData(lineData);
 
+        lineChart.setData(lineData);
         lineChart.getDescription().setEnabled(false);
-        lineChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        lineChart.animateY(1000);
+
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        lineChart.getAxisRight().setEnabled(false);
+
+        lineChart.animateY(800);
         lineChart.invalidate();
     }
 
     private void showError(String message) {
+
         tvAqiValue.setText("--");
         tvStatus.setText("Error");
         tvStatus.setTextColor(Color.RED);
         tvPrediction.setText(message);
+
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void applyTheme() {
+
+        if (isDarkMode) {
+            getWindow().getDecorView().setBackgroundColor(Color.parseColor("#0A0E27"));
+        } else {
+            getWindow().getDecorView().setBackgroundColor(Color.WHITE);
+        }
+    }
+
+    private void toggleTheme() {
+
+        isDarkMode = !isDarkMode;
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isDarkMode", isDarkMode);
+        editor.apply();
+
+        recreate();
+    }
+
+    private void logout() {
+
+        FirebaseAuth.getInstance().signOut();
+
+        Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+        finish();
     }
 }
