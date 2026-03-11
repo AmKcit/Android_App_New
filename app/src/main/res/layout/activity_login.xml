@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="💨"
             android:textSize="80sp"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
             android:text="Monitor the air, protect your health"
             android:textSize="14sp"
             android:textColor="#9E9E9E"
-            android:layout_marginBottom="40dp"/>
+            android:layout_marginBottom="16dp"/>
 
     </LinearLayout>
 
@@ -52,12 +52,15 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:hint="Email"
+            app:hintTextColor="#1E88E5"
+            app:boxStrokeColor="#1E88E5"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:inputType="textEmailAddress"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -65,18 +68,34 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="8dp"
             android:hint="Password"
             app:endIconMode="password_toggle"
+            app:endIconTint="#9E9E9E"
+            app:hintTextColor="#1E88E5"
+            app:boxStrokeColor="#1E88E5"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:inputType="textPassword"/>
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="24dp"
+            android:text="Forgot Password?"
+            android:textColor="#1E88E5"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:padding="4dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"

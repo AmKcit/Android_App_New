@@ -39,16 +39,46 @@ public class DashboardActivity extends AppCompatActivity {
 
     // Cities supported by WAQI
     String[] cities = {
-            "lahore",
-            "delhi",
-            "mumbai",
-            "bangkok",
-            "jakarta",
-            "shanghai",
-            "beijing",
-            "seoul",
-            "tokyo",
-            "london"
+            "Lahore",
+            "Delhi",
+            "Mumbai",
+            "Bangkok",
+            "Jakarta",
+            "Shanghai",
+            "Beijing",
+            "Seoul",
+            "Tokyo",
+            "London",
+            "New York",
+            "Los Angeles",
+            "Paris",
+            "Sydney",
+            "Cairo",
+            "Karachi",
+            "Dhaka",
+            "Kolkata",
+            "Tehran",
+            "Baghdad",
+            "Moscow",
+            "Istanbul",
+            "Mexico City",
+            "Sao Paulo",
+            "Lagos",
+            "Nairobi",
+            "Addis Ababa",
+            "Kampala"
+//            "Deukhuri,Dang,Lalmatiya",
+//            "Birendra School,Bhaktapur",
+//            "Surkhet",
+//            "Mustang,Jomsom"
+//            "kathmandu",
+//            "pokhara",
+//            "biratnagar",
+//            "dhangadhi",
+//            "hetauda",
+//            "nepalgunj",
+//            "dang",
+//            "bharatpur"
     };
 
     private static final String API_KEY = "87c3349785b993ad86d4b01fa941e94ebaf8f224";
