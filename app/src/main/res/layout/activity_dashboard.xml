@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".DashboardActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0A0E27"
@@ -8,472 +11,290 @@
 
     <LinearLayout
         android:id="@+id/mainLayout"
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <!-- Top Bar with Logout and Theme Toggle -->
+        <!-- HEADER -->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="20dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Dashboard"
+                android:text="Air Quality Dashboard"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#00D4FF"/>
 
             <ImageButton
                 android:id="@+id/btnThemeToggle"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_dialog_info"
-                android:contentDescription="Toggle Theme"
-                android:background="?attr/selectableItemBackground"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
-                android:scaleType="centerInside"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="Toggle theme"
+                android:src="@android:drawable/ic_menu_manage"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="#00D4FF"/>
 
             <ImageButton
                 android:id="@+id/btnLogout"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="10dp"
                 android:contentDescription="Logout"
-                android:background="?attr/selectableItemBackground"
-                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_lock_power_off"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 app:tint="#FF6B6B"/>
 
         </LinearLayout>
 
-        <!-- Premium Header Section with Gradient Effect -->
-        <LinearLayout
+        <!-- AQI MAIN CARD -->
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="28dp"
-            android:paddingBottom="16dp">
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="#1E3A8A">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="30dp">
 
                 <TextView
+                    android:id="@+id/tvAqiValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🌍"
-                    android:textSize="32sp"
-                    android:layout_marginEnd="12dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Air Quality Monitor"
-                    android:textSize="32sp"
+                    android:text="--"
+                    android:textSize="70sp"
                     android:textStyle="bold"
-                    android:textColor="#00D4FF"
-                    android:layout_marginBottom="0dp"/>
+                    android:textColor="#00D4FF"/>
+
+                <TextView
+                    android:id="@+id/tvAqiStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Loading..."
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+
+                <TextView
+                    android:id="@+id/tvPrediction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Prediction: --"
+                    android:textSize="14sp"
+                    android:textColor="#B3E5FC"
+                    android:layout_marginTop="6dp"/>
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Real-time pollution tracking • Last updated: now"
-                android:textSize="13sp"
-                android:textColor="#64B5F6"
-                android:layout_marginStart="44dp"/>
+        </com.google.android.material.card.MaterialCardView>
 
-        </LinearLayout>
+        <!-- CITY SELECTOR -->
 
-        <!-- City Selector with Premium Style -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="20dp"
             app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
             app:cardBackgroundColor="#1A1F3A"
             app:strokeColor="#00D4FF"
             app:strokeWidth="2dp">
 
-            <LinearLayout
+            <Spinner
+                android:id="@+id/citySpinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📍"
-                    android:textSize="20sp"
-                    android:layout_marginEnd="12dp"/>
-
-                <Spinner
-                    android:id="@+id/citySpinner"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:textColor="#00D4FF"
-                    android:popupBackground="#1A1F3A"
-                    android:dropDownSelector="@android:color/transparent"/>
-
-            </LinearLayout>
+                android:padding="10dp"
+                android:popupBackground="#1A1F3A"
+                android:background="@android:color/transparent"/>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Main AQI Status Card - Premium Design -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/aqiCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
-            app:cardCornerRadius="28dp"
-            app:cardElevation="16dp"
-            app:cardBackgroundColor="#1E3A8A">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:padding="40dp"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📊 CURRENT AQI STATUS"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#64B5F6"
-                    android:layout_marginBottom="24dp"
-                    android:letterSpacing="0.05"/>
-
-                <TextView
-                    android:id="@+id/tvAqiValue"
-                    android:text="--"
-                    android:textSize="72sp"
-                    android:textStyle="bold"
-                    android:textColor="#00D4FF"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"/>
-
-                <TextView
-                    android:id="@+id/tvAqiStatus"
-                    android:text="Loading..."
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="16dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/tvPrediction"
-                    android:text="⏱️ Prediction: Fetching data..."
-                    android:textSize="15sp"
-                    android:layout_marginTop="12dp"
-                    android:textColor="#B3E5FC"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Pollutants Grid Section - Premium -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🔬 Pollutant Levels"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#00D4FF"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="12dp"/>
+        <!-- POLLUTANT CARDS -->
 
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="2"
-            android:rowCount="2"
-            android:layout_marginBottom="28dp">
+            android:layout_marginBottom="20dp">
 
-            <!-- PM2.5 Card - Red -->
+            <!-- PM2.5 -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="8dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="16dp"
                 app:cardBackgroundColor="#1A1F3A"
                 app:strokeColor="#FF6B6B"
-                app:strokeWidth="2dp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="18dp"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💨 PM2.5"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
+                        android:text="PM2.5"
                         android:textColor="#FF6B6B"
-                        android:layout_marginBottom="10dp"/>
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/tvPM25"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="--"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
+                        android:textSize="24sp"
+                        android:textColor="#FFFFFF"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="μg/m³"
-                        android:textSize="12sp"
-                        android:textColor="#90CAF9"
-                        android:layout_marginTop="6dp"/>
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- PM10 Card - Orange -->
+
+            <!-- PM10 -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="8dp"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="16dp"
                 app:cardBackgroundColor="#1A1F3A"
                 app:strokeColor="#FFA726"
-                app:strokeWidth="2dp">
+                app:strokeWidth="1dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="18dp"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚠️ PM10"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
+                        android:text="PM10"
                         android:textColor="#FFA726"
-                        android:layout_marginBottom="10dp"/>
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/tvPM10"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="--"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
+                        android:textSize="24sp"
+                        android:textColor="#FFFFFF"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="μg/m³"
-                        android:textSize="12sp"
-                        android:textColor="#90CAF9"
-                        android:layout_marginTop="6dp"/>
+                        android:layout_height="wrap_content"/>
 
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- NO2 Card - Green -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="#1A1F3A"
-                app:strokeColor="#66BB6A"
-                app:strokeWidth="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌬️ NO₂"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="#66BB6A"
-                        android:layout_marginBottom="10dp"/>
-
-                    <TextView
-                        android:id="@+id/tvNO2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ppb"
-                        android:textSize="12sp"
-                        android:textColor="#90CAF9"
-                        android:layout_marginTop="6dp"/>
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- O3 Card - Purple -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="#1A1F3A"
-                app:strokeColor="#AB47BC"
-                app:strokeWidth="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🔵 O₃"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="#AB47BC"
-                        android:layout_marginBottom="10dp"/>
-
-                    <TextView
-                        android:id="@+id/tvO3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="--"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ppb"
-                        android:textSize="12sp"
-                        android:textColor="#90CAF9"
-                        android:layout_marginTop="6dp"/>
-
-                </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
         </GridLayout>
 
-        <!-- Trend Chart -->
-        <TextView
-            android:id="@+id/trendLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📈 7-Day Trend"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#00D4FF"
-            android:layout_marginBottom="16dp"/>
+        <!-- AQI CHART -->
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="320dp"
-            android:layout_marginBottom="28dp"
-            app:cardCornerRadius="22dp"
-            app:cardElevation="12dp"
-            app:cardBackgroundColor="#1A1F3A"
-            app:strokeColor="#00D4FF"
-            app:strokeWidth="1dp">
+            android:layout_height="260dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="18dp"
+            app:cardBackgroundColor="#1A1F3A">
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="16dp"/>
+                android:layout_margin="10dp"/>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Health Recommendation Card - Modern Green -->
+        <!-- SMART TOOLS -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Smart Tools"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#00D4FF"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- AQI CALCULATOR BUTTON -->
+
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/recommendationCard"
+            android:id="@+id/cardOpenCalculator"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="30dp"
             app:cardCornerRadius="18dp"
-            app:cardElevation="10dp"
-            app:cardBackgroundColor="#1B5E20"
-            app:strokeColor="#4CAF50"
-            app:strokeWidth="2dp">
+            app:cardBackgroundColor="#1A1F3A"
+            app:strokeColor="#00D4FF"
+            app:strokeWidth="2dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="22dp">
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:gravity="center_vertical">
 
                 <TextView
+                    android:text="🧮"
+                    android:textSize="28sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="💚 Health Recommendation"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    android:textColor="#81C784"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_height="wrap_content"/>
 
-                <TextView
-                    android:id="@+id/tvHealthTip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Updating recommendations..."
-                    android:textSize="15sp"
-                    android:textColor="#C8E6C9"
-                    android:lineSpacingMultiplier="1.4"/>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Manual AQI Calculator"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:text="Calculate AQI using custom PM values"
+                        android:textColor="#90CAF9"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
 
             </LinearLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
+
 </ScrollView>

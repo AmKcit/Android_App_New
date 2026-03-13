@@ -13,7 +13,6 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,7 +25,6 @@ import java.util.Map;
 public class SignupActivity extends AppCompatActivity {
 
     private TextInputEditText etEmail, etPassword, etConfirmPassword;
-    private MaterialCheckBox cbIsAdmin;
     private MaterialButton btnSignup;
     private TextView tvGoToLogin, tvPasswordStrength, tvPasswordMatch;
 
@@ -49,7 +47,6 @@ public class SignupActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
-//        cbIsAdmin = findViewById(R.id.cbIsAdmin);
         btnSignup = findViewById(R.id.btnSignup);
         tvGoToLogin = findViewById(R.id.tvGoToLogin);
         tvPasswordStrength = findViewById(R.id.tvPasswordStrength);
@@ -97,7 +94,6 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void updatePasswordStrength(String password) {
-
         int strength = calculatePasswordStrength(password);
 
         strengthBar1.setBackgroundColor(getResources().getColor(android.R.color.darker_gray, getTheme()));
@@ -125,7 +121,6 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private int calculatePasswordStrength(String password) {
-
         if (password.length() < 6) return 0;
 
         boolean hasUpper = password.matches(".*[A-Z].*");
@@ -133,7 +128,6 @@ public class SignupActivity extends AppCompatActivity {
         boolean hasSpecial = password.matches(".*[!@#$%^&*()].*");
 
         int strength = 0;
-
         if (hasUpper) strength++;
         if (hasNumber) strength++;
         if (hasSpecial) strength++;
@@ -143,7 +137,6 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void checkPasswordMatch() {
-
         String password = etPassword.getText().toString();
         String confirmPassword = etConfirmPassword.getText().toString();
 
@@ -153,28 +146,23 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         if (password.equals(confirmPassword)) {
-
             passwordMatchContainer.setVisibility(View.VISIBLE);
             ivPasswordMatch.setImageResource(android.R.drawable.ic_menu_view);
-
             tvPasswordMatch.setText("Passwords match ✓");
-
         } else {
-
             passwordMatchContainer.setVisibility(View.VISIBLE);
             ivPasswordMatch.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
-
             tvPasswordMatch.setText("Passwords do not match");
         }
     }
 
     private void registerUser() {
-
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-        String role = cbIsAdmin.isChecked() ? "admin" : "user";
+        // Admin checkbox removed: default role is always "user"
+        String role = "user";
 
         if (email.isEmpty()) {
             Toast.makeText(this,"Please enter email",Toast.LENGTH_SHORT).show();
@@ -192,21 +180,13 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         mAuth.createUserWithEmailAndPassword(email,password)
-
                 .addOnCompleteListener(task -> {
-
                     if(task.isSuccessful()){
-
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
-
                         if(firebaseUser != null){
-
                             firebaseUser.sendEmailVerification()
-
                                     .addOnCompleteListener(verifyTask -> {
-
                                         if(verifyTask.isSuccessful()){
-
                                             String uid = firebaseUser.getUid();
 
                                             Map<String,Object> user = new HashMap<>();
@@ -214,55 +194,35 @@ public class SignupActivity extends AppCompatActivity {
                                             user.put("role",role);
 
                                             db.collection("Users").document(uid)
-
                                                     .set(user)
-
                                                     .addOnSuccessListener(aVoid -> {
-
                                                         Toast.makeText(this,
                                                                 "Signup successful! Verification email sent.",
                                                                 Toast.LENGTH_LONG).show();
-
                                                         mAuth.signOut();
-
                                                         startActivity(new Intent(this,LoginActivity.class));
-
                                                         finish();
-
                                                     })
-
                                                     .addOnFailureListener(e -> {
-
                                                         Toast.makeText(this,
                                                                 "Error saving user: "+e.getMessage(),
                                                                 Toast.LENGTH_SHORT).show();
-
                                                     });
-
                                         }
                                         else{
-
                                             Toast.makeText(this,
                                                     "Failed to send verification email",
                                                     Toast.LENGTH_SHORT).show();
                                         }
-
                                     });
-
                         }
-
                     }
                     else{
-
                         String error = task.getException()!=null ?
                                 task.getException().getMessage() :
                                 "Signup failed";
-
                         Toast.makeText(this,error,Toast.LENGTH_SHORT).show();
-
                     }
-
                 });
-
     }
 }
