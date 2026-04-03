@@ -22,62 +22,85 @@ public class AqiCalculatorActivity extends AppCompatActivity {
 
     private TextView tvCalculatedAqi;
     private TextView tvCalculatedStatus;
-    private TextView tvAqiLabel; // "Overall AQI" label
+    private TextView tvAqiLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_aqi_calculator);
 
-        etPm25 = findViewById(R.id.etPm25);
-        etPm10 = findViewById(R.id.etPm10);
-        btnCalculate = findViewById(R.id.btnCalculate);
+        // Initialize views with null checks
+        try {
+            etPm25 = findViewById(R.id.etPm25);
+            etPm10 = findViewById(R.id.etPm10);
+            btnCalculate = findViewById(R.id.btnCalculate);
+            resultCard = findViewById(R.id.resultCard);
+            resultBackground = findViewById(R.id.resultBackground);
+            tvCalculatedAqi = findViewById(R.id.tvCalculatedAqi);
+            tvCalculatedStatus = findViewById(R.id.tvCalculatedStatus);
+            tvAqiLabel = findViewById(R.id.tvAqiLabel);
 
-        resultCard = findViewById(R.id.resultCard);
-        resultBackground = findViewById(R.id.resultBackground);
-
-        tvCalculatedAqi = findViewById(R.id.tvCalculatedAqi);
-        tvCalculatedStatus = findViewById(R.id.tvCalculatedStatus);
-
-        // Add this TextView in XML if not present
-        tvAqiLabel = findViewById(R.id.tvAqiLabel);
-
-        btnCalculate.setOnClickListener(v -> calculateAndDisplay());
+            if (btnCalculate != null) {
+                btnCalculate.setOnClickListener(v -> calculateAndDisplay());
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error initializing calculator: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     private void calculateAndDisplay() {
-
-        String pm25Str = etPm25.getText().toString().trim();
-        String pm10Str = etPm10.getText().toString().trim();
-
-        if (pm25Str.isEmpty() || pm10Str.isEmpty()) {
-            Toast.makeText(this, "Please enter both PM2.5 and PM10 values", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        double pm25, pm10;
-
         try {
-            pm25 = Double.parseDouble(pm25Str);
-            pm10 = Double.parseDouble(pm10Str);
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Invalid number format", Toast.LENGTH_SHORT).show();
-            return;
+            if (etPm25 == null || etPm10 == null) {
+                Toast.makeText(this, "UI components not initialized", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String pm25Str = etPm25.getText().toString().trim();
+            String pm10Str = etPm10.getText().toString().trim();
+
+            if (pm25Str.isEmpty() || pm10Str.isEmpty()) {
+                Toast.makeText(this, "Please enter both PM2.5 and PM10 values", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            double pm25, pm10;
+
+            try {
+                pm25 = Double.parseDouble(pm25Str);
+                pm10 = Double.parseDouble(pm10Str);
+
+                // Validate values
+                if (pm25 < 0 || pm10 < 0) {
+                    Toast.makeText(this, "Values cannot be negative", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid number format: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int aqi = AQICalculator.calculateOverallAQI(pm25, pm10);
+            String status = AQICalculator.getAQICategory(aqi);
+
+            if (tvCalculatedAqi != null) {
+                tvCalculatedAqi.setText(String.valueOf(aqi));
+            }
+            if (tvCalculatedStatus != null) {
+                tvCalculatedStatus.setText(status);
+            }
+
+            setResultColor(aqi);
+
+            if (resultCard != null) {
+                resultCard.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error calculating AQI: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
-        int aqi = AQICalculator.calculateOverallAQI(pm25, pm10);
-        String status = AQICalculator.getAQICategory(aqi);
-
-        tvCalculatedAqi.setText(String.valueOf(aqi));
-        tvCalculatedStatus.setText(status);
-
-        setResultColor(aqi);
-
-        resultCard.setVisibility(View.VISIBLE);
     }
 
     private void setResultColor(int aqi) {
-
         int color;
 
         if (aqi <= 50)
@@ -93,14 +116,20 @@ public class AqiCalculatorActivity extends AppCompatActivity {
         else
             color = Color.parseColor("#800000"); // Maroon
 
-        resultBackground.setBackgroundColor(color);
+        if (resultBackground != null) {
+            resultBackground.setBackgroundColor(color);
+        }
 
         int textColor = (aqi > 50 && aqi <= 100) ? Color.BLACK : Color.WHITE;
 
-        tvCalculatedAqi.setTextColor(textColor);
-        tvCalculatedStatus.setTextColor(textColor);
-
-        if (tvAqiLabel != null)
+        if (tvCalculatedAqi != null) {
+            tvCalculatedAqi.setTextColor(textColor);
+        }
+        if (tvCalculatedStatus != null) {
+            tvCalculatedStatus.setTextColor(textColor);
+        }
+        if (tvAqiLabel != null) {
             tvAqiLabel.setTextColor(textColor);
+        }
     }
 }

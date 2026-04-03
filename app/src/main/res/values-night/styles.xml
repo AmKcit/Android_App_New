@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Modern Light Theme (Default) -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <!-- Modern Dark Theme (Night) -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Primary Colors -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
@@ -38,29 +38,4 @@
         <item name="android:textColorPrimary">@color/colorOnBackground</item>
         <item name="android:textColorSecondary">@color/colorOnSurface</item>
     </style>
-
-    <!-- Dark Theme -->
-    <style name="DarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#00D4FF</item>
-        <item name="colorPrimaryVariant">#1E3A8A</item>
-        <item name="colorSecondary">#FF6B6B</item>
-        <item name="colorSecondaryVariant">#FF6B6B</item>
-        <item name="android:windowBackground">#0A0E27</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textColorPrimary">#FFFFFF</item>
-        <item name="android:textColorSecondary">#64B5F6</item>
-    </style>
-
-    <!-- Light Theme -->
-    <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">#0D47A1</item>
-        <item name="colorPrimaryVariant">#1565C0</item>
-        <item name="colorSecondary">#FF6F00</item>
-        <item name="colorSecondaryVariant">#FF6F00</item>
-        <item name="android:windowBackground">#F5F5F5</item>
-        <item name="android:textColor">#212121</item>
-        <item name="android:textColorPrimary">#212121</item>
-        <item name="android:textColorSecondary">#616161</item>
-    </style>
 </resources>
-

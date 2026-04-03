@@ -6,15 +6,17 @@
     tools:context=".DashboardActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A0E27"
-    android:scrollbars="none">
+    android:id="@+id/scrollView"
+    android:scrollbars="none"
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp"
+        android:background="#FFFFFF">
 
         <!-- HEADER -->
 
@@ -23,35 +25,36 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Air Quality Dashboard"
-                android:textSize="20sp"
+                android:text="Air Quality"
+                android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="#00D4FF"/>
+                android:textColor="#0066CC"/>
 
             <ImageButton
                 android:id="@+id/btnThemeToggle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:contentDescription="Toggle theme"
                 android:src="@android:drawable/ic_menu_manage"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="#00D4FF"/>
+                app:tint="#0066CC"/>
 
             <ImageButton
                 android:id="@+id/btnLogout"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
                 android:contentDescription="Logout"
                 android:src="@android:drawable/ic_lock_power_off"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:tint="#FF6B6B"/>
+                app:tint="@color/design_default_color_error"/>
 
         </LinearLayout>
 
@@ -59,49 +62,53 @@
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="220dp"
             android:layout_marginBottom="20dp"
-            app:cardCornerRadius="28dp"
-            app:cardElevation="12dp"
-            app:cardBackgroundColor="#1E3A8A">
+            app:cardCornerRadius="20dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="#E0E7FF"
+            app:strokeColor="#0066CC"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:padding="30dp">
+                android:padding="28dp">
 
                 <TextView
                     android:id="@+id/tvAqiValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="--"
-                    android:textSize="70sp"
+                    android:textSize="64sp"
                     android:textStyle="bold"
-                    android:textColor="#00D4FF"/>
+                    android:textColor="#0066CC"/>
 
                 <TextView
                     android:id="@+id/tvAqiStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Loading..."
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#FFFFFF"/>
+                    android:textColor="#1A1A1A"
+                    android:layout_marginTop="8dp"/>
 
                 <TextView
                     android:id="@+id/tvPrediction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Prediction: --"
-                    android:textSize="14sp"
-                    android:textColor="#B3E5FC"
+                    android:text="Last Updated: --"
+                    android:textSize="12sp"
+                    android:textColor="#5F6368"
                     android:layout_marginTop="6dp"/>
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
 
         <!-- CITY SELECTOR -->
 
@@ -109,122 +116,155 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginBottom="20dp"
-            app:cardCornerRadius="16dp"
-            app:cardBackgroundColor="#1A1F3A"
-            app:strokeColor="#00D4FF"
-            app:strokeWidth="2dp">
+            app:cardCornerRadius="14dp"
+            app:cardBackgroundColor="#F5F5F5"
+            app:cardElevation="4dp"
+            app:strokeColor="#0066CC"
+            app:strokeWidth="1dp">
 
             <Spinner
                 android:id="@+id/citySpinner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="10dp"
-                android:popupBackground="#1A1F3A"
+                android:padding="12dp"
                 android:background="@android:color/transparent"/>
 
         </com.google.android.material.card.MaterialCardView>
 
         <!-- POLLUTANT CARDS -->
 
-        <GridLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:layout_marginBottom="20dp">
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:spacing="12dp">
 
             <!-- PM2.5 -->
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#1A1F3A"
-                app:strokeColor="#FF6B6B"
+                android:layout_height="140dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="#FFEBEE"
+                app:strokeColor="#E53935"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="18dp"
-                    android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
 
                     <TextView
-                        android:text="PM2.5"
-                        android:textColor="#FF6B6B"
-                        android:textStyle="bold"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:text="PM2.5"
+                        android:textSize="12sp"
+                        android:textColor="#5C1819"
+                        android:textStyle="bold"/>
 
                     <TextView
                         android:id="@+id/tvPM25"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="--"
                         android:textSize="24sp"
-                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textColor="#E53935"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:text="µg/m³"
+                        android:textSize="10sp"
+                        android:textColor="#5C1819"
+                        android:layout_marginTop="4dp"/>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
 
             <!-- PM10 -->
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#1A1F3A"
-                app:strokeColor="#FFA726"
+                android:layout_height="140dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="6dp"
+                app:cardBackgroundColor="#F3E5FF"
+                app:strokeColor="#7C4DFF"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="18dp"
-                    android:gravity="center"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="16dp">
 
                     <TextView
-                        android:text="PM10"
-                        android:textColor="#FFA726"
-                        android:textStyle="bold"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:text="PM10"
+                        android:textSize="12sp"
+                        android:textColor="#2D0B6B"
+                        android:textStyle="bold"/>
 
                     <TextView
                         android:id="@+id/tvPM10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="--"
                         android:textSize="24sp"
-                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textColor="#7C4DFF"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:text="µg/m³"
+                        android:textSize="10sp"
+                        android:textColor="#2D0B6B"
+                        android:layout_marginTop="4dp"/>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-        </GridLayout>
+        </LinearLayout>
 
         <!-- AQI CHART -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="7-Day Trend"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="8dp"/>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="260dp"
             android:layout_marginBottom="20dp"
-            app:cardCornerRadius="18dp"
-            app:cardBackgroundColor="#1A1F3A">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="#F3E5FF">
 
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lineChart"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="10dp"/>
+                android:layout_margin="12dp"/>
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -233,11 +273,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Smart Tools"
-            android:textSize="18sp"
+            android:text="Quick Tools"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#00D4FF"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="12dp"/>
 
         <!-- AQI CALCULATOR BUTTON -->
 
@@ -246,10 +286,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
-            app:cardCornerRadius="18dp"
-            app:cardBackgroundColor="#1A1F3A"
-            app:strokeColor="#00D4FF"
-            app:strokeWidth="2dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="#C3F9E1"
             android:clickable="true"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground">
@@ -258,12 +297,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="20dp"
+                android:padding="18dp"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:text="🧮"
-                    android:textSize="28sp"
+                    android:textSize="32sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -277,19 +316,26 @@
                     <TextView
                         android:text="Manual AQI Calculator"
                         android:textStyle="bold"
-                        android:textColor="#FFFFFF"
+                        android:textColor="#003D2C"
                         android:textSize="16sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
 
                     <TextView
                         android:text="Calculate AQI using custom PM values"
-                        android:textColor="#90CAF9"
+                        android:textColor="#1DB679"
                         android:textSize="12sp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"/>
 
                 </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_menu_edit"
+                    app:tint="#003D2C"/>
 
             </LinearLayout>
 

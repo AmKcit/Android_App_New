@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Theme Colors -->
+    <color name="colorPrimary">#64B5F6</color>
+    <color name="colorOnPrimary">#002966</color>
+    <color name="colorPrimaryContainer">#004DA6</color>
+    <color name="colorOnPrimaryContainer">#E0E7FF</color>
+
+    <color name="colorSecondary">#B39DDB</color>
+    <color name="colorOnSecondary">#44229F</color>
+    <color name="colorSecondaryContainer">#5E35B1</color>
+    <color name="colorOnSecondaryContainer">#F3E5FF</color>
+
+    <color name="colorTertiary">#80DEEA</color>
+    <color name="colorOnTertiary">#003D2C</color>
+    <color name="colorTertiaryContainer">#00534D</color>
+    <color name="colorOnTertiaryContainer">#C3F9E1</color>
+
+    <color name="colorBackground">#121212</color>
+    <color name="colorOnBackground">#E5E5E5</color>
+    <color name="colorSurface">#1E1E1E</color>
+    <color name="colorOnSurface">#E5E5E5</color>
+
+    <color name="colorError">#EF5350</color>
+    <color name="colorOnError">#550E0C</color>
+    <color name="colorErrorContainer">#B71C1C</color>
+    <color name="colorOnErrorContainer">#FFEBEE</color>
+</resources>
+

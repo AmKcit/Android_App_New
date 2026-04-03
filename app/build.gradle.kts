@@ -69,5 +69,12 @@ dependencies {
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Notifications
+    implementation("androidx.core:core:1.12.0")
+
+    // WorkManager for periodic background tasks
+    implementation("androidx.work:work-runtime:2.8.1")
+
     testImplementation("junit:junit:4.13.2")
 }

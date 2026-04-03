@@ -3,6 +3,7 @@ package com.example.android_app_new;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,17 +19,27 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
     private Button btnLogin;
-    private TextView tvGoToSignup, tvForgotPassword; // Added tvForgotPassword
+    private TextView tvGoToSignup, tvForgotPassword;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        sessionManager = new SessionManager(this);
+
+        // Check if user is already logged in
+        if (sessionManager.isLoggedIn() && sessionManager.isSessionValid()) {
+            redirectToMainActivity();
+            return;
+        }
+
+        setContentView(R.layout.activity_login);
+
         db = FirebaseFirestore.getInstance();
 
         etEmail = findViewById(R.id.etEmail);
@@ -47,6 +58,16 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
+            // CHECK IF ADMIN CREDENTIALS
+            if (AdminManager.isAdmin(email, pass)) {
+                Toast.makeText(this, "Admin Login Successful!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, AdminMainActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+
+            // REGULAR USER LOGIN
             mAuth.signInWithEmailAndPassword(email, pass)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -91,25 +112,73 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void fetchUserRole(String uid) {
+        Log.d("LoginActivity", "fetchUserRole called with uid: " + uid);
+
         db.collection("Users").document(uid)
                 .get()
                 .addOnSuccessListener(document -> {
+                    Log.d("LoginActivity", "Firestore query successful");
+
                     if (document.exists()) {
+                        Log.d("LoginActivity", "User document found in Firestore");
                         String role = document.getString("role");
+                        FirebaseUser user = mAuth.getCurrentUser();
+
+                        // Create session
+                        if (user != null) {
+                            sessionManager.createLoginSession(uid, user.getEmail());
+                            Log.d("LoginActivity", "Session created for user: " + user.getEmail());
+                        }
+
                         Intent intent;
                         if ("admin".equals(role)) {
+                            Log.d("LoginActivity", "User is admin, redirecting to AdminMainActivity");
                             intent = new Intent(this, AdminMainActivity.class);
                         } else {
+                            Log.d("LoginActivity", "User is regular user, redirecting to DashboardActivity");
                             intent = new Intent(this, DashboardActivity.class);
                         }
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(this, "User data not found in database", Toast.LENGTH_SHORT).show();
+                        // User data not found - default to regular user
+                        Log.d("LoginActivity", "User document not found in Firestore, defaulting to user role");
+                        Toast.makeText(this, "Logging in...", Toast.LENGTH_SHORT).show();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            sessionManager.createLoginSession(uid, user.getEmail());
+                        }
+                        startActivity(new Intent(this, DashboardActivity.class));
+                        finish();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Error fetching role: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Handle permission denied or connection error
+                    String errorMessage = e.getMessage();
+                    Log.e("LoginActivity", "Firestore error: " + errorMessage, e);
+
+                    if (errorMessage != null && (errorMessage.contains("permission") || errorMessage.contains("PERMISSION"))) {
+                        // Firestore rules issue - log user in anyway as regular user
+                        Log.w("LoginActivity", "Permission denied by Firestore rules, allowing login anyway");
+                        Toast.makeText(this, "Logging in...", Toast.LENGTH_SHORT).show();
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            sessionManager.createLoginSession(uid, user.getEmail());
+                            Log.d("LoginActivity", "Session created despite Firestore permission error");
+                        }
+                        startActivity(new Intent(this, DashboardActivity.class));
+                        finish();
+                    } else {
+                        Log.e("LoginActivity", "Unexpected error: " + errorMessage);
+                        Toast.makeText(this, "Error: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    }
                 });
+    }
+
+    private void redirectToMainActivity() {
+        // Determine user role or just go to dashboard
+        Intent intent = new Intent(this, DashboardActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

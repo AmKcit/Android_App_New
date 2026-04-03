@@ -1,6 +1,7 @@
 package com.example.android_app_new;
 
 import com.google.gson.annotations.SerializedName;
+import android.util.Log;
 
 public class WaqiResponse {
 
@@ -43,33 +44,61 @@ public class WaqiResponse {
         }
 
         public double getPm25() {
-            if (iaqi != null && iaqi.pm25 != null) {
-                return iaqi.pm25.getValue();
+            try {
+                if (iaqi != null && iaqi.pm25 != null) {
+                    return iaqi.pm25.getValue();
+                }
+            } catch (Exception e) {
+                Log.e("WaqiResponse", "Error parsing PM2.5", e);
             }
             return pm25Value != null ? pm25Value : 0;
         }
 
         public double getPm10() {
-            if (iaqi != null && iaqi.pm10 != null) {
-                return iaqi.pm10.getValue();
+            try {
+                if (iaqi != null && iaqi.pm10 != null) {
+                    return iaqi.pm10.getValue();
+                }
+            } catch (Exception e) {
+                Log.e("WaqiResponse", "Error parsing PM10", e);
             }
             return pm10Value != null ? pm10Value : 0;
         }
 
         public double getO3() {
-            return (iaqi != null && iaqi.o3 != null) ? iaqi.o3.getValue() : 0;
+            try {
+                return (iaqi != null && iaqi.o3 != null) ? iaqi.o3.getValue() : 0;
+            } catch (Exception e) {
+                Log.e("WaqiResponse", "Error parsing O3", e);
+                return 0;
+            }
         }
 
         public double getNo2() {
-            return (iaqi != null && iaqi.no2 != null) ? iaqi.no2.getValue() : 0;
+            try {
+                return (iaqi != null && iaqi.no2 != null) ? iaqi.no2.getValue() : 0;
+            } catch (Exception e) {
+                Log.e("WaqiResponse", "Error parsing NO2", e);
+                return 0;
+            }
         }
 
         public double getSo2() {
-            return (iaqi != null && iaqi.so2 != null) ? iaqi.so2.getValue() : 0;
+            try {
+                return (iaqi != null && iaqi.so2 != null) ? iaqi.so2.getValue() : 0;
+            } catch (Exception e) {
+                Log.e("WaqiResponse", "Error parsing SO2", e);
+                return 0;
+            }
         }
 
         public double getCo() {
-            return (iaqi != null && iaqi.co != null) ? iaqi.co.getValue() : 0;
+            try {
+                return (iaqi != null && iaqi.co != null) ? iaqi.co.getValue() : 0;
+            } catch (Exception e) {
+                Log.e("WaqiResponse", "Error parsing CO", e);
+                return 0;
+            }
         }
     }
 
@@ -104,11 +133,10 @@ public class WaqiResponse {
 
     public static class PollutantValue {
         @SerializedName("v")
-        private double value = 0;
+        private Double value;
 
         public double getValue() {
-            return value;
+            return value != null ? value : 0;
         }
     }
 }
-
