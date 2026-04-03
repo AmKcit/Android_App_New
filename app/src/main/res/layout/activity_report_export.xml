@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/tvReportTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Health &amp; Export Report"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Separator -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#E0E0E0"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Health Recommendations ScrollView -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvHealthRecommendations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textIsSelectable="true"
+            android:lineSpacingExtra="4dp"
+            android:padding="8dp" />
+    </ScrollView>
+
+    <!-- Export Buttons Row 1 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:spacing="8dp">
+
+        <Button
+            android:id="@+id/btnExportCSV"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Export CSV"
+            android:textSize="12sp"
+            android:background="@drawable/button_rounded"
+            android:textColor="@color/white"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnExportTXT"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Export Text"
+            android:textSize="12sp"
+            android:background="@drawable/button_rounded"
+            android:textColor="@color/white"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnExportJSON"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Export JSON"
+            android:textSize="12sp"
+            android:background="@drawable/button_rounded"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <!-- Action Buttons Row 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:spacing="8dp">
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Share Report"
+            android:textSize="12sp"
+            android:background="@drawable/button_success"
+            android:textColor="@color/white"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="Back"
+            android:textSize="12sp"
+            android:background="@drawable/button_danger"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>
+

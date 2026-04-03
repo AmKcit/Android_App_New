@@ -4,11 +4,11 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -22,8 +22,7 @@ public class EditUserActivity extends AppCompatActivity {
 
     private TextView tvUserEmail, tvUserEmailHeader, tvStatusLabel, tvCreatedDate, tvLastLogin;
     private Spinner spinnerRole;
-    private Switch swUserStatus;
-    private Button btnSaveUserEdit, btnCancelUserEdit;
+    private SwitchCompat swUserStatus;
     private FirebaseFirestore db;
     private String userId;
     private User currentUser;
@@ -41,8 +40,8 @@ public class EditUserActivity extends AppCompatActivity {
         tvLastLogin = findViewById(R.id.tvLastLogin);
         spinnerRole = findViewById(R.id.spinnerRole);
         swUserStatus = findViewById(R.id.swUserStatus);
-        btnSaveUserEdit = findViewById(R.id.btnSaveUserEdit);
-        btnCancelUserEdit = findViewById(R.id.btnCancelUserEdit);
+        Button btnSaveUserEdit = findViewById(R.id.btnSaveUserEdit);
+        Button btnCancelUserEdit = findViewById(R.id.btnCancelUserEdit);
 
         // Initialize Firebase
         db = FirebaseFirestore.getInstance();
@@ -62,9 +61,9 @@ public class EditUserActivity extends AppCompatActivity {
         btnCancelUserEdit.setOnClickListener(v -> finish());
 
         // Update status label when switch changes
-        swUserStatus.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            tvStatusLabel.setText(isChecked ? "Active" : "Inactive");
-        });
+        swUserStatus.setOnCheckedChangeListener((buttonView, isChecked) ->
+            tvStatusLabel.setText(isChecked ? "Active" : "Inactive")
+        );
     }
 
     private void setupRoleSpinner() {
@@ -79,7 +78,7 @@ public class EditUserActivity extends AppCompatActivity {
         // Set current role
         if (currentUser != null) {
             int position = roles.indexOf(currentUser.getRole());
-            spinnerRole.setSelection(position >= 0 ? position : 0);
+            spinnerRole.setSelection(Math.max(position, 0));
         }
     }
 
@@ -113,13 +112,8 @@ public class EditUserActivity extends AppCompatActivity {
                         "role", newRole,
                         "active", newStatus
                 )
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "User updated successfully", Toast.LENGTH_SHORT).show();
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to update user: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .addOnSuccessListener(aVoid -> Toast.makeText(this, "User updated successfully", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to update user: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }
 
